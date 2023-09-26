@@ -1,9 +1,11 @@
 ﻿namespace Shopping.Controllers
 {
+	using Microsoft.AspNetCore.Authorization;
 	using Microsoft.AspNetCore.Mvc;
 	using Shopping.Application;
 	using Shopping.Application.Services.Orders;
 	using Shopping.Domain.Models.Orders;
+	using Shopping.Domain.Models.Ticket;
 
 	[ApiController]
 	[Route( "api/orders" )]
@@ -62,7 +64,7 @@
 		[HttpPost]
 		[ProducesResponseType( StatusCodes.Status201Created, Type = typeof( Order ) )]
 		[ProducesResponseType( StatusCodes.Status400BadRequest )]
-		public async Task<IActionResult> PostOrder( Shopping.Dtos.Models.Orders.Order order )
+		public async Task<IActionResult> PostOrder( Dtos.Models.Orders.Order order )
 		{
 			try
 			{
@@ -74,5 +76,58 @@
 				return this.BadRequest( ex.Message );
 			}
 		}
+
+
+		/// <summary>
+		/// Creates an order using existing products.
+		/// </summary>
+		/// <param name="ticket">ticket import model containing the position
+		/// to buy.</param>
+		/// <returns>An <see cref="ticket"/> that represents 
+		/// the summary of the order.</returns>
+		/// <response code="200">The ticket is created.</response>
+		/// <response code="400">The ticket doesnt met requirements.</response>
+		[HttpPost( "GeneratePosition" )]
+		[ProducesResponseType( StatusCodes.Status201Created, Type = typeof( Ticket ) )]
+		[ProducesResponseType( StatusCodes.Status400BadRequest )]
+		[Authorize]
+		public async Task<IActionResult> GeneratePosition( Dtos.Models.Ticket.Ticket ticket )
+		{
+			try
+			{
+				Ticket orderCreated = await this._orderService.PostCreatePosition( ticket );
+				return this.Ok( orderCreated );
+			}
+			catch( BadRequestException ex )
+			{
+				return this.BadRequest( ex.Message );
+			}
+		}
+
+		/// <summary>
+		/// Creates an order using existing products.
+		/// </summary>
+		/// <param name="ticket">ticket import model containing the position
+		/// to buy.</param>
+		/// <returns>An <see cref="ticket"/> that represents 
+		/// the summary of the order.</returns>
+		/// <response code="200">The ticket is created.</response>
+		/// <response code="400">The ticket doesnt met requirements.</response>
+		[HttpPut( "UpdatePosition" )]
+		[ProducesResponseType( StatusCodes.Status400BadRequest )]
+		[Authorize]
+		public async Task<IActionResult> UpdatePosition( string IdUser )
+		{
+			try
+			{
+				await this._orderService.UpdatePosition( IdUser );
+				return this.Ok();
+			}
+			catch( BadRequestException ex )
+			{
+				return this.BadRequest( ex.Message );
+			}
+		}
+
 	}
 }

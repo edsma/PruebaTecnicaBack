@@ -3,6 +3,7 @@
 	using Microsoft.EntityFrameworkCore;
 	using Shopping.Domain.Models.Orders;
 	using Shopping.Domain.Models.Products;
+	using Shopping.Domain.Models.Ticket;
 
 	public class ShoppingContext: DbContext, IShoppingContext
 	{
@@ -16,6 +17,8 @@
 		public DbSet<Product> Products { get; set; }
 
 		public DbSet<Order> Orders { get; set; }
+
+		public DbSet<Ticket> Tickets { get; set; }
 
 		public DbSet<OrderProduct> OrderProducts { get; set; }
 
