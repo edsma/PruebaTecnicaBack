@@ -15,7 +15,7 @@ namespace Shopping.Dtos.Models.Ticket
 		[Required]
 		public string TypeOfProcess { get; set; }
 
-		public bool Status { get; set; }
+		public string Status { get; set; }
 
 		[Required]
 		public string Sucursal { get; set; }

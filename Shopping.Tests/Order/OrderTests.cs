@@ -3,6 +3,7 @@ using Moq;
 using Shopping.Application.Services.Orders;
 using Shopping.Application.Services.Products;
 using Shopping.Domain.Models.Orders;
+using Shopping.Domain.Models.Ticket;
 using Shopping.Infrastructure.Data;
 
 public class OrderTests
@@ -16,6 +17,48 @@ public class OrderTests
 		_contextMock = new Mock<IShoppingContext>();
 		_productServiceMock = new Mock<IProductService>();
 		_orderService = new OrderService( _contextMock.Object, _productServiceMock.Object );
+	}
+
+	[Fact]
+	public void PostPosition()
+	{
+		// Arrange
+		var expectedOrders = new Shopping.Dtos.Models.Ticket.Ticket
+		{
+			Date = DateTime.Now,
+			FullName = "Perenito Gonzales",
+			IdCc = "5698547854",
+			Status = "Revisar",
+			Sucursal = "Castilla",
+			TypeOfProcess = "Consulta"
+			
+		};
+
+		this._contextMock.Setup( c => c.Tickets.Add( It.IsAny<Ticket>() ) );
+		this._contextMock.Setup( c => c.SaveChanges() ).Verifiable();
+
+
+		// Act
+		var actualOrders = _orderService.PostCreatePosition( expectedOrders );
+
+		// Assert
+		Assert.Equal( expectedOrders, expectedOrders );
+	}
+
+	[Fact]
+	public void UpdatePosition()
+	{
+		
+
+		this._contextMock.Setup( c => c.Tickets.Add( It.IsAny<Ticket>() ) );
+		this._contextMock.Setup( c => c.SaveChanges() ).Verifiable();
+
+
+		// Act
+		var actualOrders = _orderService.UpdatePosition( "1234567" );
+
+		// Assert
+		Assert.True( actualOrders.IsCompleted);
 	}
 
 	[Fact]
